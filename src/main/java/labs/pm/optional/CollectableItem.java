@@ -13,14 +13,17 @@ package labs.pm.optional;
 import labs.pm.data.Rating;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 
 /**
  * @author $ {Vladyslav Marii}
  **/
-public record Food(int id, String name, BigDecimal price,
-                   Rating rating, LocalDate bestBefore) implements Product{
-    public BigDecimal discount(){
-        return BigDecimal.TEN;
+public non-sealed class CollectableItem extends Souvenir {
+    public CollectableItem(int id, String name, BigDecimal price, Rating rating, String size) {
+        super(id, name, price, rating, size);
+    }
+
+    @Override
+    public BigDecimal discount() {
+        return BigDecimal.valueOf(15);
     }
 }

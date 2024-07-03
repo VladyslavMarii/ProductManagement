@@ -13,14 +13,22 @@ package labs.pm.optional;
 import labs.pm.data.Rating;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 
 /**
  * @author $ {Vladyslav Marii}
  **/
-public record Food(int id, String name, BigDecimal price,
-                   Rating rating, LocalDate bestBefore) implements Product{
-    public BigDecimal discount(){
-        return BigDecimal.TEN;
+public class SealedExample {
+    public static void main(String[] args) {
+        Product p1 = new CollectableItem(130, "Big Ben design coffee mug",
+                BigDecimal.valueOf(10.45), Rating.FOUR_STAR, "Big");
+        System.out.println(
+                p1.name()+" has a discount of "+ p1.discount()+"%"
+        );
+        Product p2 = new Drink(
+          120, "Kefir", BigDecimal.valueOf(3.55), Rating.FIVE_STAR
+        );
+        System.out.println(
+                p2.name()+" has a discount of "+ p2.discount()+"%"
+        );
     }
 }

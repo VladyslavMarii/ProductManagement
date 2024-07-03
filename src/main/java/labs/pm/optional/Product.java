@@ -10,17 +10,12 @@
 
 package labs.pm.optional;
 
-import labs.pm.data.Rating;
-
 import java.math.BigDecimal;
-import java.time.LocalDate;
 
 /**
  * @author $ {Vladyslav Marii}
  **/
-public record Food(int id, String name, BigDecimal price,
-                   Rating rating, LocalDate bestBefore) implements Product{
-    public BigDecimal discount(){
-        return BigDecimal.TEN;
-    }
+public sealed interface Product permits Drink, Food, Souvenir {
+    String name();
+    BigDecimal discount();
 }

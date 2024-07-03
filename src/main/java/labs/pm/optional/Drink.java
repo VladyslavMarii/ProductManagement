@@ -17,5 +17,9 @@ import java.math.BigDecimal;
 /**
  * @author $ {Vladyslav Marii}
  **/
-public record Drink(int id, String name, BigDecimal price, Rating rating) {
+public record Drink(int id, String name, BigDecimal price, Rating rating) implements Product {
+    @Override
+    public BigDecimal discount() {
+        return BigDecimal.valueOf(5);
+    }
 }
