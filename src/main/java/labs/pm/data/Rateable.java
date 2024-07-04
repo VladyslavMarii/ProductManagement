@@ -8,19 +8,25 @@
  *
  */
 
-package labs.pm.optional;
-
-import labs.pm.data.Rating;
-
-import java.math.BigDecimal;
-import java.time.LocalDate;
+package labs.pm.data;
 
 /**
  * @author $ {Vladyslav Marii}
  **/
-public record Food(int id, String name, BigDecimal price,
-                   Rating rating, LocalDate bestBefore) implements Product{
-    public BigDecimal discount(){
-        return BigDecimal.TEN;
+@FunctionalInterface
+public interface Rateable<T> {
+    public static final Rating DEFAULT_RATING = Rating.NOT_RATED;
+
+    public abstract T applyRating(Rating rating);
+    public default T applyRating(int stars){
+        return applyRating(convert(stars));
+    }
+
+    public default Rating getRating() {
+        return DEFAULT_RATING;
+    }
+
+    public static Rating convert(int stars) {
+        return (stars >= 0 && stars <= 5) ? Rating.values()[stars] : DEFAULT_RATING;
     }
 }

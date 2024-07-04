@@ -26,7 +26,7 @@ import java.util.Objects;
  * @author Vladyslav Marii
  * @version 4.0
  */
-public sealed class Product permits Drink, Food {
+public sealed class Product implements Rateable<Product> permits Drink, Food {
     private int id;
     private String name;
     private BigDecimal price;
@@ -39,10 +39,12 @@ public sealed class Product permits Drink, Food {
      */
     public static final BigDecimal DISCOUNT_RATE = BigDecimal.valueOf(0.1);
 
-//    public Product() {
+    //    public Product() {
 //        this(0, "no name", BigDecimal.ZERO);
 //    }
-
+//    public Product(int id, String name, BigDecimal price) {
+//        this(id, name, price, Rating.NOT_RATED);
+//    }
     Product(int id, String name, BigDecimal price, Rating rating) {
         this.id = id;
         this.name = name;
@@ -50,13 +52,12 @@ public sealed class Product permits Drink, Food {
         this.rating = rating;
     }
 
-    public Product applyRating(Rating newRating){
-        return new Product(getId(),getName(),getPrice(),newRating);
-    };
 
-//    public Product(int id, String name, BigDecimal price) {
-//        this(id, name, price, Rating.NOT_RATED);
-//    }
+    public Product applyRating(Rating newRating) {
+        return new Product(getId(), getName(), getPrice(), newRating);
+    }
+
+    ;
 
     public int getId() {
         return id;
