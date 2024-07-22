@@ -95,8 +95,10 @@ public sealed class Product implements Rateable<Product> permits Drink, Food {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Product product)) return false;
-        return getId() == product.getId() && Objects.equals(getName(), product.getName());
+      if(o instanceof  Product product){
+          return id == product.id;
+      }
+      return false;
     }
 
     @Override
