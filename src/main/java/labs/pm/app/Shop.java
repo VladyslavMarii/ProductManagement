@@ -9,7 +9,6 @@
  */
 package labs.pm.app;
 
-import labs.pm.data.Food;
 import labs.pm.data.Product;
 import labs.pm.data.ProductManager;
 import labs.pm.data.Rating;
@@ -26,7 +25,7 @@ import java.util.Locale;
  */
 public class Shop {
     public static void main(String[] args) {
-        ProductManager pm = new ProductManager(Locale.US);
+        ProductManager pm = new ProductManager("en-GB");
         Product p1 = pm.createProduct(101, "Tea", BigDecimal.valueOf(1.99), Rating.NOT_RATED);
         pm.printProductReport(p1);
         p1 = pm.reviewProduct(101, Rating.FOUR_STAR, "Nice hot cup of tea");
@@ -36,7 +35,7 @@ public class Shop {
         p1 = pm.reviewProduct(101, Rating.FIVE_STAR, "Perfect tea");
         p1 = pm.reviewProduct(101, Rating.THREE_STAR, "Just add some lemon");
         pm.printProductReport(101);
-
+        pm.changeLocale("es-US");
         Product p2 = pm.createProduct(102, "Coffee", BigDecimal.valueOf(1.99), Rating.NOT_RATED);
         p2 = pm.reviewProduct(102, Rating.THREE_STAR, "Coffee was ok");
         p2 = pm.reviewProduct(102, Rating.ONE_STAR, "Bad arabica coffee");
@@ -58,7 +57,7 @@ public class Shop {
         Product p5 = pm.createProduct(105, "Hot Chocolate", BigDecimal.valueOf(2.50), Rating.NOT_RATED);
         p5 = pm.reviewProduct(105, Rating.FOUR_STAR, "Tasty");
         p5 = pm.reviewProduct(105, Rating.FOUR_STAR, "Not bad at all");
-
+        pm.changeLocale("uk-UA");
         Product p6 = pm.createProduct(106, "Chocolate", BigDecimal.valueOf(2.99), Rating.NOT_RATED);
         p6 = pm.reviewProduct(106, Rating.TWO_STAR, "Too sweet");
         p6 = pm.reviewProduct(106, Rating.THREE_STAR, "Eatable");

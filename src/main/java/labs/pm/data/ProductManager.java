@@ -23,16 +23,30 @@ import java.util.*;
  **/
 public class ProductManager {
     private final Map<Product, List<Review>> products = new HashMap<>();
-    private final Locale locale;
-    private final ResourceBundle resources;
-    private final DateTimeFormatter dateFormat;
-    private final NumberFormat moneyFormat;
+    private ResourceFormatter formatter;
+    private static Map<String, ResourceFormatter> formatters =
+            Map.of("en-GB", new ResourceFormatter(Locale.UK),
+                    "en-US", new ResourceFormatter(Locale.US),
+                    "es-US", new ResourceFormatter(new Locale("es", "US")),
+                    "fr-FR", new ResourceFormatter(Locale.FRANCE),
+                    "uk-UA", new ResourceFormatter(new Locale("uk", "UA")),
+                    "zh-CN", new ResourceFormatter(Locale.CHINA));
 
     public ProductManager(Locale locale) {
-        this.locale = locale;
-        resources = ResourceBundle.getBundle("labs.pm.data.resources", locale, getClass().getClassLoader());
-        dateFormat = DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT).localizedBy(locale);
-        moneyFormat = NumberFormat.getCurrencyInstance(locale);
+        this(locale.toLanguageTag());
+    }
+
+    public ProductManager(String languageTag) {
+        changeLocale(languageTag);
+    }
+
+    public void changeLocale(String languageTag) {
+        formatter = formatters.getOrDefault(languageTag,
+                formatters.get("en-GB"));
+    }
+
+    public static Set<String> getSupportedLocales() {
+        return formatters.keySet();
     }
 
     public Product createProduct(int id, String name, BigDecimal price,
@@ -48,10 +62,11 @@ public class ProductManager {
         products.putIfAbsent(product, new ArrayList<>());
         return product;
     }
-    public Product findProduct(int id){
+
+    public Product findProduct(int id) {
         Product result = null;
-        for( Product product: products.keySet()){
-            if(product.getId()==id){
+        for (Product product : products.keySet()) {
+            if (product.getId() == id) {
                 result = product;
                 break;
             }
@@ -59,10 +74,11 @@ public class ProductManager {
         return result;
     }
 
-    public Product reviewProduct(int id, Rating rating, String comments){
+    public Product reviewProduct(int id, Rating rating, String comments) {
         return reviewProduct(findProduct(id), rating, comments);
     }
-    public void printProductReport(int id){
+
+    public void printProductReport(int id) {
         printProductReport(findProduct(id));
     }
 
@@ -70,25 +86,14 @@ public class ProductManager {
         List<Review> reviews = products.get(product);
         Collections.sort(reviews);
         StringBuilder txt = new StringBuilder();
-        txt.append(MessageFormat.format(resources.getString("product"),
-                product.getName(),
-                moneyFormat.format(product.getPrice()),
-                product.getRating().getStars(),
-                dateFormat.format(product.getBestBefore())));
-
+        txt.append(formatter.formatProduct(product));
         txt.append('\n');
         for (Review review : reviews) {
-            if (review == null) {
-                break;
-            }
-            txt.append(MessageFormat.format(resources.getString("review"),
-                    review.getRating().getStars(),
-                    review.getComments()));
+            txt.append(formatter.formatReview(review));
             txt.append('\n');
         }
-
         if (reviews.isEmpty()) {
-            txt.append(resources.getString("no.reviews"));
+            txt.append(formatter.getText("no.reviews"));
             txt.append('\n');
         }
         System.out.println(txt);
@@ -101,13 +106,44 @@ public class ProductManager {
 
         int sum = 0;
 
-        for (Review review: reviews) {
+        for (Review review : reviews) {
             sum += review.getRating().ordinal();
         }
         product = product.applyRating(Rateable.convert(
-                Math.round((float) sum/reviews.size())
+                Math.round((float) sum / reviews.size())
         ));
         products.put(product, reviews);
         return product;
+    }
+
+    private static class ResourceFormatter {
+        private Locale locale;
+        private ResourceBundle resources;
+        private DateTimeFormatter dateFormat;
+        private NumberFormat moneyFormat;
+
+        private ResourceFormatter(Locale locale) {
+            this.locale = locale;
+            resources = ResourceBundle.getBundle("labs.pm.data.resources", locale);
+            dateFormat = DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT).localizedBy(locale);
+            moneyFormat = NumberFormat.getCurrencyInstance(locale);
+        }
+
+        private String formatProduct(Product product) {
+            return MessageFormat.format(resources.getString("product"),
+                    product.getName(),
+                    moneyFormat.format(product.getPrice()),
+                    product.getRating().getStars(),
+                    dateFormat.format(product.getBestBefore()));
+        }
+
+        private String formatReview(Review review) {
+            return MessageFormat.format(resources.getString("review"),
+                    review.getRating().getStars(), review.getComments());
+        }
+
+        private String getText(String key) {
+            return resources.getString(key);
+        }
     }
 }
