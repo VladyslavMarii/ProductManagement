@@ -78,6 +78,15 @@ public class ProductManager {
         return reviewProduct(findProduct(id), rating, comments);
     }
 
+    public void printProducts(Comparator<Product> sorter){
+        List<Product> productList = new ArrayList<>(products.keySet());
+        productList.sort(sorter);
+        StringBuilder txt = new StringBuilder();
+        for (Product product : productList) {
+            txt.append(formatter.formatProduct(product)).append("\n");
+        }
+        System.out.println(txt);
+    }
     public void printProductReport(int id) {
         printProductReport(findProduct(id));
     }
